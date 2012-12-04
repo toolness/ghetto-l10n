@@ -34,6 +34,7 @@ if (Meteor.isClient) {
   };
   
   Session.set("locale", null);
+  Session.set("module", null);
   Session.set("editingString", null);
   
   Template.stringRow.isLocalized = function() {
@@ -135,16 +136,25 @@ if (Meteor.isClient) {
   };
 
   Template.main.modules = function() {
-    return Sources.find({}).fetch();
+    return Sources.find({});
   };
   
   Template.main.locale = function() {
     return Session.get("locale");
   };
+
+  Template.main.module = function() {
+    var moduleName = Session.get("module");
+    if (moduleName)
+      return Sources.findOne({
+        id: moduleName
+      });
+  };
   
   var GhettoRouter = Backbone.Router.extend({
     routes: {
       ":locale": "locale",
+      ":locale/*module": "module",
       "": "home"
     },
     home: function() {
@@ -153,6 +163,12 @@ if (Meteor.isClient) {
     locale: function(locale) {
       locale = locale.toLowerCase();
       Session.set("locale", locale);
+      Session.set("module", null);
+    },
+    module: function(locale, module) {
+      locale = locale.toLowerCase();
+      Session.set("locale", locale);
+      Session.set("module", module);
     }
   });
   

@@ -4,7 +4,6 @@
 
 <body>
   <div class="container">
-    <h1>Ghetto Localization Editor</h1>
     {{> main}}
   </div>
 </body>
@@ -29,8 +28,10 @@
 </template>
 
 <template name="moduleTable">
-  <h3><span class="muted">module</span> {{id}}</h3>
-  <p>{{{description}}}</p>
+  <div class="hero-unit">
+    <h1>{{id}}</h1>
+    <p>{{{description}}}</p>
+  </div>
   <table class="table">
     <tr>
       <th>Key</th>
@@ -45,14 +46,39 @@
 
 <template name="main">
   {{#if locale}}
-    <h2><span class="muted">locale</span> {{locale}}</h2>
-    {{#each modules}}
-      {{> moduleTable}}
-    {{/each}}
+    {{#if module}}
+      <ul class="breadcrumb">
+        <li><a href="/">home</a> <span class="divider">/</span></li>
+        <li><a href="/{{locale}}">{{locale}}</a> <span class="divider">/</span></li>
+        <li class="active">{{module.id}}</li>
+      </ul>
+      {{#with module}}
+        {{> moduleTable}}
+      {{/with}}
+    {{else}}
+      <ul class="breadcrumb">
+        <li><a href="/">home</a> <span class="divider">/</span></li>
+        <li class="active">{{locale}}</li>
+      </ul>
+      <div class="hero-unit">
+        <h1>{{locale}}</h1>
+        <p>Choose a module to localize.</p>
+      </div>
+      {{#each modules}}
+        <h3>module <a href="/{{locale}}/{{id}}">{{id}}</a></h3>
+        <p>{{{description}}}</p>
+      {{/each}}
+    {{/if}}
   {{else}}
-  <p>Choose a locale, bro.</p>
+  <ul class="breadcrumb">
+    <li class="active">home</li>
+  </ul>
+  <div class="hero-unit">
+    <h1>ghetto localization editor</h1>
+    <p>Choose a locale, yo.</p>
+  </div>
   <ul>
-    <li><a href="/en">English</a></li>
+    <li><a href="/en">en</a></li>
   </ul>
   {{/if}}
 </template>
