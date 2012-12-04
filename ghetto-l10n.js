@@ -34,35 +34,31 @@ if (Meteor.isClient) {
   };
   
   Session.set("locale", null);
-  
-  Template.main.modules = function() {
+
+  Template.moduleTable.strings = function() {
+    var source = this;
     var locale = Session.get("locale");
-    var sources = Sources.find({}).fetch();
-    var modules = [];
-    sources.forEach(function(source) {
-      var strings = [];
-      var localization = Localizations.findOne({
-        locale: locale,
-        id: source.id
-      }) || {};
-      Object.keys(source.root).forEach(function(key) {
-        var help = "";
-        if (source.metadata && key in source.metadata)
-          help = source.metadata[key].help || "";
-        strings.push({
-          key: key,
-          rootValue: source.root[key],
-          localizedValue: localization[key] || "",
-          help: help
-        });
-      });
-      modules.push({
-        id: source.id,
-        description: source.description,
-        strings: strings
+    var strings = [];
+    var localization = Localizations.findOne({
+      locale: locale,
+      id: source.id
+    }) || {};
+    Object.keys(source.root).forEach(function(key) {
+      var help = "";
+      if (source.metadata && key in source.metadata)
+        help = source.metadata[key].help || "";
+      strings.push({
+        key: key,
+        rootValue: source.root[key],
+        localizedValue: localization[key] || "",
+        help: help
       });
     });
-    return modules;
+    return strings;
+  };
+
+  Template.main.modules = function() {
+    return Sources.find({}).fetch();
   };
   
   Template.main.locale = function() {

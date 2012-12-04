@@ -9,26 +9,34 @@
   </div>
 </body>
 
+<template name="stringRow">
+  <tr>
+    <td><code>{{key}}</code><p class="muted"><small>{{{help}}}</small></p></td>
+    <td><pre class="pre-scrollable">{{rootValue}}</pre></td>
+    <td><pre class="pre-scrollable">{{localizedValue}}</pre></td>
+  </tr>
+</template>
+
+<template name="moduleTable">
+  <h3><span class="muted">module</span> {{id}}</h3>
+  <p>{{{description}}}</p>
+  <table class="table">
+    <tr>
+      <th>Key</th>
+      <th>Base Value</th>
+      <th>Localized Value</th>
+    </tr>
+    {{#each strings}}
+    {{> stringRow}}
+    {{/each}}
+  </table>
+</template>
+
 <template name="main">
   {{#if locale}}
     <h2><span class="muted">locale</span> {{locale}}</h2>
     {{#each modules}}
-      <h3><span class="muted">module</span> {{id}}</h3>
-      <p>{{{description}}}</p>
-      <table class="table">
-        <tr>
-          <th>Key</th>
-          <th>Base Value</th>
-          <th>Localized Value</th>
-        </tr>
-        {{#each strings}}
-        <tr>
-          <td><code>{{key}}</code><p class="muted"><small>{{{help}}}</small></p></td>
-          <td><pre class="pre-scrollable">{{rootValue}}</pre></td>
-          <td><pre class="pre-scrollable">{{localizedValue}}</pre></td>
-        </tr>
-        {{/each}}
-      </table>
+      {{> moduleTable}}
     {{/each}}
   {{else}}
   <p>Choose a locale, bro.</p>
