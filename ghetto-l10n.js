@@ -135,6 +135,39 @@ if (Meteor.isClient) {
     return strings;
   };
 
+  Template.main.locales = function() {
+    var locales = [];
+    var countries = {};
+    var languages = {};
+    LOCALES.forEach(function(country) {
+      var countryCode = Object.keys(country)[0];
+      var info = country[countryCode];
+      countries[countryCode] = info;
+      info.languages.forEach(function(languageCode) {
+        if (!(languageCode in languages)) {
+          languages[languageCode] = [];
+        }
+        languages[languageCode].push(countryCode);
+      });
+    });
+    Object.keys(ISO_LANGS).forEach(function(langCode) {
+      locales.push({
+        code: langCode,
+        name: ISO_LANGS[langCode].name
+      });
+      if (langCode in languages) {
+        languages[langCode].forEach(function(countryCode) {
+          locales.push({
+            code: langCode + '-' + countryCode.toLowerCase(),
+            name: ISO_LANGS[langCode].name + ' - ' +
+                  countries[countryCode].name
+          });
+        });
+      }
+    });
+    return locales;
+  };
+  
   Template.main.modules = function() {
     return Sources.find({});
   };

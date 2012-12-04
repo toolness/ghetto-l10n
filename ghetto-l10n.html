@@ -78,7 +78,9 @@
     <p>Choose a locale, yo.</p>
   </div>
   <ul>
-    <li><a href="/en">en</a></li>
+    {{#each locales}}
+      <li><a href="/{{code}}">{{code}}</a> ({{name}})</li>
+    {{/each}}
   </ul>
   {{/if}}
 </template>
