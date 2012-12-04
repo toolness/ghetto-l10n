@@ -1,3 +1,11 @@
 .localized-col {
   width: 33%;
 }
+
+#edit {
+  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+  width: 100%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
