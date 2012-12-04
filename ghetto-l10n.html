@@ -13,7 +13,13 @@
   <tr>
     <td><code>{{key}}</code><p class="muted"><small>{{{help}}}</small></p></td>
     <td><pre class="pre-scrollable">{{rootValue}}</pre></td>
-    <td><pre class="pre-scrollable">{{localizedValue}}</pre></td>
+    <td class="localized-col">
+      {{#if editing}}
+      <textarea id="edit">{{localizedValue}}</textarea>
+      {{else}}
+      <pre class="pre-scrollable display">{{localizedValue}}</pre>
+      {{/if}}
+    </td>
   </tr>
 </template>
 
@@ -24,7 +30,7 @@
     <tr>
       <th>Key</th>
       <th>Base Value</th>
-      <th>Localized Value</th>
+      <th class="localized-col">Localized Value</th>
     </tr>
     {{#each strings}}
     {{> stringRow}}

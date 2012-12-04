@@ -34,7 +34,56 @@ if (Meteor.isClient) {
   };
   
   Session.set("locale", null);
+  Session.set("editingString", null);
+  
+  Template.stringRow.editing = function() {
+    var editingString = Session.get("editingString");
+    
+    if (!editingString)
+      return false;
+    return (editingString.module == this.source.id &&
+            editingString.key == this.key);
+  };
 
+  Template.stringRow.events(okCancelEvents('#edit', {
+    ok: function(value) {
+      if (this.localization) {
+        var update = {};
+        update['strings.' + this.key] = value;
+        Localizations.update({
+          _id: this.localization._id
+        }, {
+          $set: update
+        });
+      } else {
+        var strings = {};
+        strings[this.key] = value;
+        Localizations.insert({
+          locale: this.locale,
+          id: this.source.id,
+          strings: strings
+        });
+      }
+      Session.set("editingString", null);
+    },
+    cancel: function() {
+      Session.set("editingString", null);
+    }
+  }));
+  
+  Template.stringRow.events({
+    'click .display': function(event, template) {
+      console.log('CLICK', this.source.id, this);
+      Session.set("editingString", {
+        module: this.source.id,
+        key: this.key
+      });
+      Meteor.flush();
+      template.find('#edit').focus();
+      template.find('#edit').select();
+    }
+  });
+  
   Template.moduleTable.strings = function() {
     var source = this;
     var locale = Session.get("locale");
@@ -42,15 +91,21 @@ if (Meteor.isClient) {
     var localization = Localizations.findOne({
       locale: locale,
       id: source.id
-    }) || {};
+    });
     Object.keys(source.root).forEach(function(key) {
+      var localizedValue = "";
       var help = "";
+      if (localization)
+        localizedValue = localization.strings[key] || "";
       if (source.metadata && key in source.metadata)
         help = source.metadata[key].help || "";
       strings.push({
+        source: source,
+        locale: locale,
+        localization: localization,
         key: key,
         rootValue: source.root[key],
-        localizedValue: localization[key] || "",
+        localizedValue: localizedValue,
         help: help
       });
     });
