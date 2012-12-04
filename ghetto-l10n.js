@@ -52,6 +52,7 @@ if (Meteor.isClient) {
 
   Template.stringRow.events(okCancelEvents('#edit', {
     ok: function(value) {
+      value = value.trim();
       if (this.localization) {
         var update = {};
         update['strings.' + this.key] = value;

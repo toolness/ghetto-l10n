@@ -16,8 +16,10 @@
     <td class="localized-col">
       {{#if editing}}
       <textarea id="edit">{{localizedValue}}</textarea>
+      <p><small>Press enter to confirm the value, ESC to cancel. Use shift-enter to insert a newline.</small></p>
       {{else}}
       <pre class="pre-scrollable display">{{localizedValue}}</pre>
+      <p><small>Click on the field above to edit its value.</small></p>
       {{#if isLocalized}}
       <button class="btn btn-danger remove">Remove</button>
       {{/if}}
