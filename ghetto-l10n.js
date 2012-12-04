@@ -36,6 +36,11 @@ if (Meteor.isClient) {
   Session.set("locale", null);
   Session.set("editingString", null);
   
+  Template.stringRow.isLocalized = function() {
+    return (this.localization &&
+            (this.key in this.localization.strings));
+  };
+  
   Template.stringRow.editing = function() {
     var editingString = Session.get("editingString");
     
@@ -72,8 +77,24 @@ if (Meteor.isClient) {
   }));
   
   Template.stringRow.events({
+    'click .remove': function(event) {
+      if (Object.keys(this.localization.strings).length == 1) {
+        // This is the only localized string left, so delete the
+        // whole localization.
+        Localizations.remove({
+          _id: this.localization._id
+        });
+      } else {
+        var removals = {};
+        removals['strings.' + this.key] = 1;
+        Localizations.update({
+          _id: this.localization._id
+        }, {
+          $unset: removals
+        });
+      }
+    },
     'click .display': function(event, template) {
-      console.log('CLICK', this.source.id, this);
       Session.set("editingString", {
         module: this.source.id,
         key: this.key

@@ -18,6 +18,9 @@
       <textarea id="edit">{{localizedValue}}</textarea>
       {{else}}
       <pre class="pre-scrollable display">{{localizedValue}}</pre>
+      {{#if isLocalized}}
+      <button class="btn btn-danger remove">Remove</button>
+      {{/if}}
       {{/if}}
     </td>
   </tr>
