@@ -180,6 +180,63 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
   __meteor_bootstrap__.app.use(function(req, res, next) {
+    if (req.method == "GET") {
+      var match = req.url.match(/^\/l10n\/(.+)\/nls\/(.+)\.js/);
+      if (match)
+        return Fiber(function() {
+          var pre = match[1];
+          var post = match[2];
+          var localeMatch = post.match(/([a-z\-]+)\/(.+)/);
+          var locale;
+          var id;
+          var localization;
+          var localeInfo = {root: true};
+          var returnModuleJS = function(obj) {
+            var payload = 'define(' +
+                          JSON.stringify(obj, null, 2) +
+                          ');';
+            res.writeHead(200, {
+              'Content-Type': 'application/javascript'
+            });
+            res.end(payload);
+          };
+          
+          if (localeMatch) {
+            // Looking for a specific localization.
+            locale = localeMatch[1];
+            id = pre + '/nls/' + localeMatch[2];
+            if (locale == 'root') {
+              localization = Sources.findOne({id: id});
+              if (localization)
+                return returnModuleJS(localization.root);
+            } else {
+              localization = Localizations.findOne({
+                locale: locale,
+                id: id
+              });
+              if (localization)
+                return returnModuleJS(localization.strings);
+            }
+          } else {
+            // Looking for metadata about available localizations.
+            id = pre + '/nls/' + post;
+            if (Sources.findOne({id: id})) {
+              Localizations.find({
+                id: id
+              }, {
+                fields: {
+                  locale: 1
+                }
+              }).forEach(function(localization) {
+                localeInfo[localization.locale] = true;
+              });
+              return returnModuleJS(localeInfo);
+            }
+          }
+          res.writeHead(404);
+          res.end('NOT FOUND: ' + req.url);
+        }).run();
+    }
     if (req.method == "POST" && req.url == "/sources") {
       var data = [];
       req.setEncoding('utf8');
