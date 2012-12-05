@@ -131,7 +131,7 @@ if (Meteor.isClient) {
         locale: locale,
         localization: localization,
         key: key,
-        rootValue: source.root[key],
+        rootValue: source.root[key].trim(),
         localizedValue: localizedValue,
         help: help
       });
