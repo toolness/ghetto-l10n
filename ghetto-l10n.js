@@ -37,6 +37,10 @@ if (Meteor.isClient) {
   Session.set("module", null);
   Session.set("editingString", null);
   
+  Template.stringRow.isKeySameAsValue = function() {
+    return this.key == this.rootValue;
+  };
+  
   Template.stringRow.isLocalized = function() {
     return (this.localization &&
             (this.key in this.localization.strings));

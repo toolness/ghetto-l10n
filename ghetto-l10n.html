@@ -10,7 +10,13 @@
 
 <template name="stringRow">
   <tr>
-    <td><code>{{key}}</code><p class="muted"><small>{{{help}}}</small></p></td>
+    <td>
+      {{#if isKeySameAsValue}}
+      {{else}}
+      <code>{{key}}</code>
+      {{/if}}
+      <p class="muted"><small>{{{help}}}</small></p>
+    </td>
     <td><pre class="pre-scrollable">{{rootValue}}</pre></td>
     <td class="localized-col">
       {{#if editing}}
